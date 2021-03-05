@@ -1,0 +1,26 @@
+{
+  "name": "http-api-assignment-ii",
+  "version": "1.0.0",
+  "description": "Htpp assignment 2",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"No Tests\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oracra/http-api-assignment-ii.git"
+  },
+  "author": "Nick Arcaro",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "eslint": "^7.7.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.0"
+  },
+  "bugs": {
+    "url": "https://github.com/oracra/http-api-assignment-ii/issues"
+  },
+  "homepage": "https://github.com/oracra/http-api-assignment-ii#readme"
+}
