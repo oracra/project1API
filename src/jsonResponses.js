@@ -1,6 +1,6 @@
 let LeagueAPI = require('leagueapiwrapper');
-//const clientHandler = require('../client/client.html');
 
+let champsList = {};
 const champsListParsed = {};
 const leagueAPIKey = 'RGAPI-ef3f0e2a-bc23-49f4-b70c-c344a45b4d9e';
 const users = {};
@@ -49,9 +49,8 @@ const getChampionList = (request, response) => {
     message: 'List retrieved',
   };
 
-  //const champsData = clientHandler.champsList;
-  if (champsData) {
-    Object.keys(champsData).forEach((key) => {
+  if (champsList) {
+    Object.keys(champsList).forEach((key) => {
       console.log(key);
       champsListParsed[key] = {
         championKey: key.key,
@@ -127,6 +126,10 @@ const getMastery = (request, response) => {
   return respondJSON(request, response, 200, responseJSON);
 };
 
+const setChampList = (htmlList) => {
+  champsList = htmlList;
+};
+
 module.exports = {
   getUsers,
   getUsersMeta,
@@ -136,5 +139,5 @@ module.exports = {
   getSummoner,
   getMastery,
   getChampionList,
-
+  setChampList,
 };

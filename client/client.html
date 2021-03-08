@@ -8,6 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script id = 'clientScript' type="text/babel">
     let champsList = {};
+    const jsonHandler = require('./jsonResponses');
 
     const handleResponse = (xhr, parseResponse) => {
       const content = document.querySelector('#content')
@@ -97,7 +98,7 @@
       const addUser = (e) => sendPost(e, nameForm);
 
       champsList = requestChampionList();
-      
+      jsonHandler.setChampsList(champsList);
 
       userForm.addEventListener('submit', getUsers);
       nameForm.addEventListener('submit', addUser);
@@ -105,9 +106,6 @@
 
     window.onload = init;
 
-    module.exports = {
-        champsList,
-    }
 
   </script>
 </head>
