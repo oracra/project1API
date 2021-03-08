@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/oracra/http-api-assignment-ii/issues"
   },
-  "homepage": "https://github.com/oracra/http-api-assignment-ii#readme"
+  "homepage": "https://github.com/oracra/http-api-assignment-ii#readme",
+  "dependencies": {
+    "leagueapiwrapper": "^2.3.1"
+  }
 }
