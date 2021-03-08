@@ -3,6 +3,7 @@ const url = require('url');
 const query = require('querystring');
 const jsonHandler = require('./jsonResponses');
 const htmlHandler = require('./htmlResponses');
+
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
@@ -12,7 +13,7 @@ const urlStruct = {
     '/getUsers': jsonHandler.getUsers,
     '/getSummoner': jsonHandler.getSummoner,
     '/getMastery': jsonHandler.getMastery,
-    '/getChampionList' : jsonHandler.getChampionList,
+    '/getChampionList': jsonHandler.getChampionList,
     notFound: jsonHandler.notFound,
   },
   HEAD: {
@@ -46,11 +47,10 @@ const handlePost = (request, response, parsedUrl) => {
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   console.dir(parsedUrl.pathname);
-  //console.dir("Method" + request.method);
-  
+  // console.dir("Method" + request.method);
 
   if (request.method === 'POST') {
-    console.dir("Method" + request.method);
+    console.dir(`Method${request.method}`);
 
     handlePost(request, response, parsedUrl);
   } else if (urlStruct[request.method][parsedUrl.pathname]) {
