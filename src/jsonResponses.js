@@ -49,7 +49,7 @@ const getChampionList = (request, response) => {
     message: 'List retrieved',
   };
 
-  const champsData = clientHandler.champsList;
+  //const champsData = clientHandler.champsList;
   if (champsData) {
     Object.keys(champsData).forEach((key) => {
       console.log(key);
