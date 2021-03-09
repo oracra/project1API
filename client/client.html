@@ -97,11 +97,11 @@
       const getUsers = (e) => requestUpdate(e, userForm);
       const addUser = (e) => sendPost(e, nameForm);
 
-      champsList = requestChampionList();
+      champsList = requestChampionList();      
       jsonHandler.setChampsList(champsList);
 
       userForm.addEventListener('submit', getUsers);
-      nameForm.addEventListener('submit', addUser);
+      nameForm.addEventListener('submit', jsonHandler.getImages);
     };
 
     window.onload = init;
@@ -114,10 +114,8 @@
   <section id="top">
     <h3>POST Status Code Tests</h3>
     <form id="nameForm" action="/addUser" method="post">
-      <label for="name">Name: </label>
+      <label for="name">Summoner Name: </label>
       <input id="nameField" type="text" name="name" />
-      <label for="age">Age: </label>
-      <input id="ageField" type="number" name="age" min="0" max="100" step="1" />
       <input type="submit" value="Add User" />
     </form>
     <form id="userForm" action="/getUsers" method="get">
