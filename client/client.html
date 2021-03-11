@@ -6,9 +6,9 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
-  <script id = 'clientScript' type="text/babel">
+  <script id='clientScript' type="text/babel">
     let champsList = {};
-    const jsonHandler = require('./jsonResponses');
+
 
     const handleResponse = (xhr, parseResponse) => {
       const content = document.querySelector('#content')
@@ -29,8 +29,11 @@
       if (parseResponse) {
         const obj = JSON.parse(xhr.response);
         console.dir(obj);
+        champsList = obj;
+        console.log(champsList);
+        postChampsList(champsList);
 
-        content.innerHTML += `<p>${xhr.response}</p>`
+        //content.innerHTML += `<p>${xhr.response}</p>`
       } else {
         content.innerHTML += '<p>Meta Data Received</p>';
       }
@@ -59,6 +62,7 @@
 
     };
 
+
     const sendPost = (e, nameForm) => {
       e.preventDefault();
 
@@ -82,6 +86,21 @@
       return false;
     };
 
+    const postChampsList = (champsListPost) => {
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('post', '/addChampsList');
+
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+
+      xhr.onload = () => handleResponse(xhr, false);
+      console.dir(champsListPost);
+      xhr.send(champsList);
+
+      return false;
+    }
+
     const requestChampionList = () => {
       const xhr = new XMLHttpRequest();
       xhr.open("GET", 'http://ddragon.leagueoflegends.com/cdn/11.5.1/data/en_US/champion.json');
@@ -89,6 +108,7 @@
       xhr.onload = () => handleResponse(xhr, true);
 
       xhr.send();
+      return false;
     }
 
     const init = () => {
@@ -97,11 +117,12 @@
       const getUsers = (e) => requestUpdate(e, userForm);
       const addUser = (e) => sendPost(e, nameForm);
 
-      champsList = requestChampionList();      
-      jsonHandler.setChampsList(champsList);
+      requestChampionList();
+      console.log("After Request and Post" + champsList);
+      //console.log("After Request and Post" + champsList);
 
       userForm.addEventListener('submit', getUsers);
-      nameForm.addEventListener('submit', jsonHandler.getImages);
+      //nameForm.addEventListener('submit', getImages);
     };
 
     window.onload = init;

@@ -42,6 +42,26 @@ const handlePost = (request, response, parsedUrl) => {
       jsonHandler.addUser(request, response, bodyParams);
     });
   }
+  else if (parsedUrl.pathname === '/addChampsList') {
+    const body = [];
+
+    request.on('error', (err) => {
+      console.dir(err);
+      response.statusCode = 400;
+      response.end();
+    });
+
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    });
+
+    request.on('end', () => {
+      const bodyString = Buffer.concat(body).toString();
+      const bodyParams = query.parse(bodyString);
+      console.log((bodyParams));
+      jsonHandler.getChampionList(request, response, bodyParams);
+    });
+  }
 };
 
 const onRequest = (request, response) => {

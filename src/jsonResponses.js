@@ -1,11 +1,11 @@
 let LeagueAPI = require('leagueapiwrapper');
 
-let champsList = {};
-let champIDArray = {};
+
+const champIDArray = {};
 let championMasteryList = {};
-let imageURLs = {};
-const champsListParsed = {};
-const leagueAPIKey = 'RGAPI-99585707-192d-4b6e-bbb7-7e4dd71a2e4b';
+const imageURLs = {};
+let champsListParsed = {};
+const leagueAPIKey = 'RGAPI-8cf6f70c-a43d-4527-895f-a74ba947f8ad';
 const users = {};
 
 LeagueAPI = new LeagueAPI(leagueAPIKey, Region.NA);
@@ -47,17 +47,24 @@ const getUsers = (request, response) => {
 
 const getUsersMeta = (request, response) => respondJSONMeta(request, response, 200);
 
-const getChampionList = () => {
-  if (champsList) {
-    Object.keys(champsList).forEach((key) => {
-      console.log(key);
-      champsListParsed[key] = {
-        championKey: key.key,
+const getChampionList = (request, response, htmlList) => {
+  const responseJSON = {
+    message: 'List received Sucsessfully',
+  };
+    console.log(htmlList);
+    let champsList = htmlList;
+    console.log(champsList);
+    const keys = Object.keys(champsList);
+    for(const key of keys){
+      
+      champsListParsed[key.key] = {
         championId: key.id,
       };
-    });
-  }
-  // return respondJSON(request, response, 200, responseJSON);
+      console.log(champsListParsed[key.key]);
+    };
+    
+  
+  return respondJSON(request, response, 200, responseJSON);
 };
 
 const addUser = (request, response, body) => {
@@ -93,56 +100,44 @@ const addUser = (request, response, body) => {
 // Gets the users summoner name and profile
 const getSummoner = () => {
   LeagueAPI.getSummonerByName('Oracra')
-    .then((accountObj) => {
-      return LeagueAPI.getChampionMastery(accountObj);
-      
-    }).then((championMasteryListPromise) =>{
+    .then((accountObj) => LeagueAPI.getChampionMastery(accountObj))
+    .then((championMasteryListPromise) => {
       championMasteryList = championMasteryListPromise;
     })
     .catch(console.error);
-    console.log(championMasteryList);
+  console.log(championMasteryList);
 };
 
-
-// Gets top 3 champions
-const getMastery = async(request, response) => {
-  const responseJSON = {
-    message: "masteryObject gotten SuccessFully",
-    imageURLs, champIDArray
-  }
-  LeagueAPI.getSummonerByName('Oracra')
-    .then((accountObj) => {
-      return LeagueAPI.getChampionMastery(accountObj);
-      
-    }).then((championMasteryListPromise) =>{
-      championMasteryList = championMasteryListPromise
-      return setTop3Mastery();
-    }).then(() =>{
-      console.log(imageURLs);
-      console.log(champIDArray);
-    })
-    .catch(console.error);
-    console.log(championMasteryList);
-
-  return respondJSON(request, response, 200, responseJSON);
-};
-
-const setTop3Mastery= ()=>{   
+const setTop3Mastery = () => {
   
   for (let i = 0; i < 3; i++) {
-    champIDArray[i] = championMasteryList[i].championId;
-    console.log(championMasteryList[i].championId);
+    console.log(champsListParsed);
+    champIDArray[i] = champsListParsed[championMasteryList.championId].id;  
   }
   for (let i = 0; i < 3; i++) {
     imageURLs[i] = (`http://ddragon.leagueoflegends.com/cdn/img/champion/tiles/${champIDArray[i]}_0.jpg`);
   }
-  return;
-}
-
-
-const setChampList = (htmlList) => {
-  champsList = htmlList;
 };
+// Gets top 3 champions
+const getMastery = async (request, response) => {
+  const responseJSON = {
+    message: 'masteryObject gotten SuccessFully',
+    imageURLs,
+    champIDArray,
+  };
+  LeagueAPI.getSummonerByName('Oracra')
+    .then((accountObj) => LeagueAPI.getChampionMastery(accountObj))
+     .then((championMasteryListPromise) => {
+      championMasteryList = championMasteryListPromise;
+      return setTop3Mastery();
+    }).then(() => {
+    })
+    .catch(console.error);
+  
+
+  return respondJSON(request, response, 200, responseJSON);
+};
+
 
 module.exports = {
   getUsers,
@@ -153,6 +148,5 @@ module.exports = {
   getSummoner,
   getMastery,
   getChampionList,
-  setChampList,
 
 };
