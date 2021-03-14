@@ -18,9 +18,13 @@
           break;
         case 201: '<b>Created</b>;'
           break;
+        case 204: '<b>This object already exsists</b>;'
+          break;
         case 400: '<b>Bad Request</b>;'
+
           break;
         case 404: '<b>Not Found</b>;'
+          document.querySelector("#summonerNameText").innerHTML = "User Not Found";
           break;
         default:
           content.innerHTML = '<p>Error code not implemented</p>';
@@ -29,10 +33,10 @@
       if (parseResponse) {
         const obj = JSON.parse(xhr.response);
         console.log(obj);
-        
+
         //document.getElementById("#mastery1").src = obj.imageURLs[0];
-        
-        if (obj.champIDArray[0]) {
+
+        if (obj.champIDArray != undefined) {
           document.querySelector("#masteryName1").innerText = obj.champIDArray[0].championId;
           document.querySelector("#mastery1").src = obj.imageURLs[0];
           document.querySelector("#masteryName2").innerText = obj.champIDArray[1].championId;
@@ -90,20 +94,52 @@
       xhr.onload = () => handleResponse(xhr, true);
 
       const formData = `name=${nameField.value}`;
+      document.querySelector("#summonerNameText").innerHTML = nameField.value;
+      xhr.send(formData);
+
+      return false;
+    };
+    const sendNewUser = (e, userForm) => {
+      e.preventDefault();
+
+      const nameAction = userForm.getAttribute('action');
+      const nameMethod = userForm.getAttribute('method');
+
+      const nameField = document.querySelector("#summonerNameText").innerHTML;
+
+
+      if (nameField == "User Not Found") {
+        console.log("SEND USER" + nameField);
+
+        return false;
+      }
+
+      const xhr = new XMLHttpRequest();
+      xhr.open(nameMethod, nameAction);
+
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urleconded');
+
+      xhr.onload = () => handleResponse(xhr, true);
+
+      const formData = `name=${nameField}`;
+      console.log(formData);
       xhr.send(formData);
 
       return false;
     };
 
+
     const init = () => {
       const summonerForm = document.querySelector("#summonerForm");
       const userForm = document.querySelector("#userForm");
-      const getUsers = (e) => requestUpdate(e, userForm);
       const setMastery = (e) => sendPost(e, summonerForm);
+      const addUsers = (e) => sendNewUser(e, userForm);
+
 
       //console.log("After Request and Post" + champsList);
 
-      userForm.addEventListener('submit', getUsers);
+      userForm.addEventListener('submit', addUsers);
       summonerForm.addEventListener('submit', setMastery);
     };
 
@@ -121,16 +157,8 @@
         <input id="nameField" type="text" name="name" />
         <input type="submit" value="Find Summoner" />
       </form>
-      <form id="userForm" action="/getUsers" method="get">
-        <select id='urlField'>
-          <option value='/getUsers'>/getUsers</option>
-          <option value='/notReal'>/notReal</option>
-        </select>
-        <select id="methodSelect">
-          <option value="get">GET</option>
-          <option value="head">HEAD</option>
-        </select>
-        <input type="submit" value="Get User" />
+      <form id="userForm" action="/addUser" method="post">
+        <input type="submit" value="Add Current User" />
       </form>
   </section>
   <section id="content">
