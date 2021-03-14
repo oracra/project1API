@@ -1,8 +1,12 @@
 const http = require('http');
+//const https = require('https');
+
 const url = require('url');
 const query = require('querystring');
 const jsonHandler = require('./jsonResponses');
 const htmlHandler = require('./htmlResponses');
+let masterList;
+
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
@@ -13,7 +17,6 @@ const urlStruct = {
     '/getUsers': jsonHandler.getUsers,
     '/getSummoner': jsonHandler.getSummoner,
     '/getMastery': jsonHandler.getMastery,
-    '/getChampionList': jsonHandler.getChampionList,
     notFound: jsonHandler.notFound,
   },
   HEAD: {
@@ -22,7 +25,7 @@ const urlStruct = {
   },
 };
 const handlePost = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/addUser') {
+  if (parsedUrl.pathname === '/setUser') {
     const body = [];
 
     request.on('error', (err) => {
@@ -38,32 +41,27 @@ const handlePost = (request, response, parsedUrl) => {
     request.on('end', () => {
       const bodyString = Buffer.concat(body).toString();
       const bodyParams = query.parse(bodyString);
-      console.dir(bodyParams);
-      jsonHandler.addUser(request, response, bodyParams);
-    });
-  }
-  else if (parsedUrl.pathname === '/addChampsList') {
-    const body = [];
 
-    request.on('error', (err) => {
-      console.dir(err);
-      response.statusCode = 400;
-      response.end();
-    });
-
-    request.on('data', (chunk) => {
-      body.push(chunk);
-    });
-
-    request.on('end', () => {
-      const bodyString = Buffer.concat(body).toString();
-      const bodyParams = query.parse(bodyString);
-      console.log((bodyParams));
-      jsonHandler.getChampionList(request, response, bodyParams);
+      jsonHandler.getMastery(request, response, bodyParams.name);
     });
   }
 };
+const getMasterList = () => {
+  http.get('http://ddragon.leagueoflegends.com/cdn/11.5.1/data/en_US/champion.json', (resp) => {
+    let data = ' ';
 
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    resp.on('end', () => {
+      masterList = JSON.parse(data).data;
+      jsonHandler.parseChampionList(masterList);
+    });
+
+
+  });
+}
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   console.dir(parsedUrl.pathname);
@@ -74,11 +72,12 @@ const onRequest = (request, response) => {
 
     handlePost(request, response, parsedUrl);
   } else if (urlStruct[request.method][parsedUrl.pathname]) {
-    urlStruct[request.method][parsedUrl.pathname](request, response);
+    urlStruct[request.method][parsedUrl.pathname](request, response, masterList);
   } else {
     urlStruct.GET.notFound(request, response);
   }
 };
+getMasterList();
 
 http.createServer(onRequest).listen(port);
 

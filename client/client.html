@@ -7,9 +7,9 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script id='clientScript' type="text/babel">
-    let champsList = {};
 
-
+    let champID = [];
+    let imageURL = [];
     const handleResponse = (xhr, parseResponse) => {
       const content = document.querySelector('#content')
 
@@ -28,10 +28,19 @@
 
       if (parseResponse) {
         const obj = JSON.parse(xhr.response);
-        console.dir(obj);
-        champsList = obj;
-        console.log(champsList);
-        postChampsList(champsList);
+        console.log(obj);
+        
+        //document.getElementById("#mastery1").src = obj.imageURLs[0];
+        
+        if (obj.champIDArray[0]) {
+          document.querySelector("#masteryName1").innerText = obj.champIDArray[0].championId;
+          document.querySelector("#mastery1").src = obj.imageURLs[0];
+          document.querySelector("#masteryName2").innerText = obj.champIDArray[1].championId;
+          document.querySelector("#mastery2").src = obj.imageURLs[1];
+          document.querySelector("#masteryName3").innerText = obj.champIDArray[2].championId;
+          document.querySelector("#mastery3").src = obj.imageURLs[2];
+
+        }
 
         //content.innerHTML += `<p>${xhr.response}</p>`
       } else {
@@ -63,14 +72,14 @@
     };
 
 
-    const sendPost = (e, nameForm) => {
+    const sendPost = (e, summonerForm) => {
       e.preventDefault();
 
-      const nameAction = nameForm.getAttribute('action');
-      const nameMethod = nameForm.getAttribute('method');
+      const nameAction = summonerForm.getAttribute('action');
+      const nameMethod = summonerForm.getAttribute('method');
 
-      const nameField = nameForm.querySelector("#nameField");
-      const ageField = nameForm.querySelector("#ageField");
+      const nameField = summonerForm.querySelector("#nameField");
+
 
       const xhr = new XMLHttpRequest();
       xhr.open(nameMethod, nameAction);
@@ -78,51 +87,24 @@
       xhr.setRequestHeader('Accept', 'application/json');
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urleconded');
 
-      xhr.onload = () => handleResponse(xhr);
+      xhr.onload = () => handleResponse(xhr, true);
 
-      const formData = `name=${nameField.value}&age=${ageField.value}`;
+      const formData = `name=${nameField.value}`;
       xhr.send(formData);
 
       return false;
     };
 
-    const postChampsList = (champsListPost) => {
-
-      const xhr = new XMLHttpRequest();
-      xhr.open('post', '/addChampsList');
-
-      xhr.setRequestHeader('Accept', 'application/json');
-      xhr.setRequestHeader('Content-Type', 'application/json');
-
-      xhr.onload = () => handleResponse(xhr, false);
-      console.dir(champsListPost);
-      xhr.send(champsList);
-
-      return false;
-    }
-
-    const requestChampionList = () => {
-      const xhr = new XMLHttpRequest();
-      xhr.open("GET", 'http://ddragon.leagueoflegends.com/cdn/11.5.1/data/en_US/champion.json');
-      xhr.setRequestHeader('Accept', 'application/json', true);
-      xhr.onload = () => handleResponse(xhr, true);
-
-      xhr.send();
-      return false;
-    }
-
     const init = () => {
-      const nameForm = document.querySelector("#nameForm");
+      const summonerForm = document.querySelector("#summonerForm");
       const userForm = document.querySelector("#userForm");
       const getUsers = (e) => requestUpdate(e, userForm);
-      const addUser = (e) => sendPost(e, nameForm);
+      const setMastery = (e) => sendPost(e, summonerForm);
 
-      requestChampionList();
-      console.log("After Request and Post" + champsList);
       //console.log("After Request and Post" + champsList);
 
       userForm.addEventListener('submit', getUsers);
-      //nameForm.addEventListener('submit', getImages);
+      summonerForm.addEventListener('submit', setMastery);
     };
 
     window.onload = init;
@@ -133,25 +115,35 @@
 
 <body>
   <section id="top">
-    <h3>POST Status Code Tests</h3>
-    <form id="nameForm" action="/addUser" method="post">
-      <label for="name">Summoner Name: </label>
-      <input id="nameField" type="text" name="name" />
-      <input type="submit" value="Add User" />
-    </form>
-    <form id="userForm" action="/getUsers" method="get">
-      <select id='urlField'>
-        <option value='/getUsers'>/getUsers</option>
-        <option value='/notReal'>/notReal</option>
-      </select>
-      <select id="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
-      </select>
-      <input type="submit" value="Get User" />
-    </form>
+    <h2>League Of Legends Summoner Finder</h3>
+      <form id="summonerForm" action="/setUser" method="post">
+        <label for="name">Summoner Name: </label>
+        <input id="nameField" type="text" name="name" />
+        <input type="submit" value="Find Summoner" />
+      </form>
+      <form id="userForm" action="/getUsers" method="get">
+        <select id='urlField'>
+          <option value='/getUsers'>/getUsers</option>
+          <option value='/notReal'>/notReal</option>
+        </select>
+        <select id="methodSelect">
+          <option value="get">GET</option>
+          <option value="head">HEAD</option>
+        </select>
+        <input type="submit" value="Get User" />
+      </form>
   </section>
   <section id="content">
+    <h3 id="summonerNameText">Summoner Name Here</h3>
+    <p id="masteryName1"></p>
+    <p id="masteryName2"></p>
+    <p id="masteryName3"></p>
+    <img id="mastery1" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673.png"
+      width="10%" height="10%" />
+    <img id="mastery2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673.png"
+      width="10%" height="10%" />
+    <img id="mastery3" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673.png"
+      width="10%" height="10%" />
   </section>
 </body>
 
