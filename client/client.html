@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Our simple HTTP server</title>
+  <title>Arcaro Project1</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
@@ -10,6 +10,29 @@
 
     let champID = [];
     let imageURL = [];
+    let users = [];
+    let listElements = [];
+    let userCount = 0;
+
+    /* Extra feature that I couldnt get working due to not being able to set
+    a listener during the responde 
+
+    const fillSearchBar = (li) =>{
+      console.log("here");
+      const summonerForm = document.querySelector("#summonerForm");
+      summonerForm.getAttribute(nameField).value = li.innerHTML;
+    }
+
+    const setLiEvent = () =>{
+      let ul = document.querySelector("#summonerList");
+      let liHTML = ul.getElementsByTagName('li');
+      console.log(liHTML);
+      let liArray = [...liHTML];
+      liArray.forEach((li)=>{
+      })
+    }
+    */
+
     const handleResponse = (xhr, parseResponse) => {
       const content = document.querySelector('#content')
 
@@ -21,7 +44,6 @@
         case 204: '<b>This object already exsists</b>;'
           break;
         case 400: '<b>Bad Request</b>;'
-
           break;
         case 404: '<b>Not Found</b>;'
           document.querySelector("#summonerNameText").innerHTML = "User Not Found";
@@ -32,31 +54,44 @@
 
       if (parseResponse) {
         const obj = JSON.parse(xhr.response);
-        console.log(obj);
 
-        //document.getElementById("#mastery1").src = obj.imageURLs[0];
 
         if (obj.champIDArray != undefined) {
-          document.querySelector("#masteryName1").innerText = obj.champIDArray[0].championId;
+          document.querySelector("#masteryName1").innerText = "#1. " + obj.champIDArray[0].championId;
           document.querySelector("#mastery1").src = obj.imageURLs[0];
-          document.querySelector("#masteryName2").innerText = obj.champIDArray[1].championId;
+          document.querySelector("#masteryName2").innerText = "#2. " + obj.champIDArray[1].championId;
           document.querySelector("#mastery2").src = obj.imageURLs[1];
-          document.querySelector("#masteryName3").innerText = obj.champIDArray[2].championId;
+          document.querySelector("#masteryName3").innerText = "#3. " + obj.champIDArray[2].championId;
           document.querySelector("#mastery3").src = obj.imageURLs[2];
 
+        } else if (obj.users !== undefined) {
+          users = Object.keys(obj.users);
+          let ul = document.querySelector("#summonerList");
+          
+          ul.innerHTML = 'Saved Users';
+          
+          users.forEach((user) =>{
+            let li = document.createElement('li');
+            li.innerHTML = user;           
+            ul.appendChild(li);
+          })
+          
+        } else {
+          //content.innerHTML += '<p>Meta Data Received</p>';
         }
+      };
+        listElements.forEach((li) =>{
+        
 
-        //content.innerHTML += `<p>${xhr.response}</p>`
-      } else {
-        content.innerHTML += '<p>Meta Data Received</p>';
-      }
-    };
+      })
+    }
 
-    const requestUpdate = (e, userForm) => {
+
+    const requestUpdate = (e) => {
       e.preventDefault();
 
-      const url = userForm.querySelector('#urlField').value;
-      const method = userForm.querySelector('#methodSelect').value;
+      const url = "/getUsers";
+      const method = "get";
 
       const xhr = new XMLHttpRequest();
       xhr.open(method, url);
@@ -71,6 +106,8 @@
       }
       xhr.send();
 
+      
+
       return false;
 
     };
@@ -78,10 +115,9 @@
 
     const sendPost = (e, summonerForm) => {
       e.preventDefault();
-
       const nameAction = summonerForm.getAttribute('action');
       const nameMethod = summonerForm.getAttribute('method');
-
+      
       const nameField = summonerForm.querySelector("#nameField");
 
 
@@ -109,7 +145,6 @@
 
 
       if (nameField == "User Not Found") {
-        console.log("SEND USER" + nameField);
 
         return false;
       }
@@ -123,11 +158,19 @@
       xhr.onload = () => handleResponse(xhr, true);
 
       const formData = `name=${nameField}`;
-      console.log(formData);
+
+      if (xhr.status === 204) {
+
+      }
+      else {
+
+      }
       xhr.send(formData);
 
       return false;
     };
+
+    
 
 
     const init = () => {
@@ -135,11 +178,14 @@
       const userForm = document.querySelector("#userForm");
       const setMastery = (e) => sendPost(e, summonerForm);
       const addUsers = (e) => sendNewUser(e, userForm);
+      const refreshUsers = (e) => requestUpdate(e);
 
 
-      //console.log("After Request and Post" + champsList);
 
-      userForm.addEventListener('submit', addUsers);
+
+      userForm.addEventListener('submit', addUsers,);
+      userForm.addEventListener('submit', refreshUsers);
+
       summonerForm.addEventListener('submit', setMastery);
     };
 
@@ -157,22 +203,31 @@
         <input id="nameField" type="text" name="name" />
         <input type="submit" value="Find Summoner" />
       </form>
-      <form id="userForm" action="/addUser" method="post">
-        <input type="submit" value="Add Current User" />
-      </form>
+      
+      <p id= "errorMessage"></p>
   </section>
+  <div id="fullDisplay">
   <section id="content">
-    <h3 id="summonerNameText">Summoner Name Here</h3>
+    <h3 id="summonerNameText"></h3>
+
     <p id="masteryName1"></p>
     <p id="masteryName2"></p>
     <p id="masteryName3"></p>
-    <img id="mastery1" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673.png"
-      width="10%" height="10%" />
-    <img id="mastery2" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673.png"
-      width="10%" height="10%" />
-    <img id="mastery3" src="https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673.png"
-      width="10%" height="10%" />
+    <img id="mastery1" />
+    <img id="mastery2" />
+    <img id="mastery3" />
+    <form id="userForm" action="/addUser" method="post">
+      <input id="addUserButton"type="submit" value="Add Current User" />
+    </form>
+    <ul id="summonerList"></ul>
+    
   </section>
+
+
+   
+
+
+</div> 
 </body>
 
 </html>

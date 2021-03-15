@@ -89,7 +89,6 @@ const getSummoner = () => {
       championMasteryList = championMasteryListPromise;
     })
     .catch(console.error);
-  console.log(championMasteryList);
 };
 
 const setTop3Mastery = () => {

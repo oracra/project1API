@@ -3,6 +3,8 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 0;
+  font-family:'Courier New', Courier, monospace;
+  background-color: rgb(130, 188, 245);
 }
 
 #top {
@@ -13,9 +15,72 @@ html, body {
 #top h1 {
   font-size: 2em;
 }
+img{
+  
+  width: auto;
+  height: auto;
+}
 
 #content {
-  margin-top: 100px;
-  font-size: 2em;
+  background-color: white;
   text-align: center;
+  display: grid;
+  
+  justify-content: center;
+  grid-column-gap: 1%;
+  margin-top: 2%;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: 30%;
+  padding-bottom: 30vh;
+  font-size: 1.5em;
+  
 }
+#mastery1{
+  grid-column: 1;
+  grid-row: 3;
+}
+#mastery2{
+  grid-column: 2;
+  grid-row: 3;
+}
+#mastery1{
+  grid-column: 3;
+  grid-row: 3;
+}
+#masteryName1{
+  grid-column: 1;
+  grid-row: 2;
+}
+#masteryName2{
+  grid-column: 2;
+  grid-row: 2;
+
+}
+#masteryName3{
+  grid-column: 3;
+  grid-row: 2;
+
+}
+#summonerNameText{
+  grid-row: 1;
+  grid-column: 1/span 4;
+}
+
+#summonerList{
+  grid-row: 3;
+  grid-column: 4;
+}
+
+ul{  
+  text-align: left;
+
+  list-style-type:square;
+}
+
+#userForm{
+  
+  grid-row: 2;
+  grid-column: 4;
+}
+
