@@ -32,7 +32,7 @@
       })
     }
     */
-
+    //Handles all responses from the server
     const handleResponse = (xhr, parseResponse) => {
       const content = document.querySelector('#content')
 
@@ -55,8 +55,9 @@
       if (parseResponse) {
         const obj = JSON.parse(xhr.response);
 
-
+        //If the championId is present that means that it called /getMastery
         if (obj.champIDArray != undefined) {
+          //Set all images and names to the proper arrays
           document.querySelector("#masteryName1").innerText = "#1. " + obj.champIDArray[0].championId;
           document.querySelector("#mastery1").src = obj.imageURLs[0];
           document.querySelector("#masteryName2").innerText = "#2. " + obj.champIDArray[1].championId;
@@ -64,12 +65,13 @@
           document.querySelector("#masteryName3").innerText = "#3. " + obj.champIDArray[2].championId;
           document.querySelector("#mastery3").src = obj.imageURLs[2];
 
+          //If there is users present then that means /getUsers was called
         } else if (obj.users !== undefined) {
           users = Object.keys(obj.users);
           let ul = document.querySelector("#summonerList");
           
           ul.innerHTML = 'Saved Users';
-          
+          //Creates list of all the users
           users.forEach((user) =>{
             let li = document.createElement('li');
             li.innerHTML = user;           
@@ -80,13 +82,9 @@
           //content.innerHTML += '<p>Meta Data Received</p>';
         }
       };
-        listElements.forEach((li) =>{
-        
-
-      })
     }
 
-
+    //Will get users
     const requestUpdate = (e) => {
       e.preventDefault();
 
@@ -112,13 +110,13 @@
 
     };
 
-
+    //This sendPost will call get mastery
     const sendPost = (e, summonerForm) => {
       e.preventDefault();
       const nameAction = summonerForm.getAttribute('action');
       const nameMethod = summonerForm.getAttribute('method');
       
-      const nameField = summonerForm.querySelector("#nameField");
+      const nameField = summonerForm.querySelector("#nameField"); //summoner name
 
 
       const xhr = new XMLHttpRequest();
@@ -159,12 +157,6 @@
 
       const formData = `name=${nameField}`;
 
-      if (xhr.status === 204) {
-
-      }
-      else {
-
-      }
       xhr.send(formData);
 
       return false;
@@ -174,14 +166,12 @@
 
 
     const init = () => {
+      //Links all functions to event handlers
       const summonerForm = document.querySelector("#summonerForm");
       const userForm = document.querySelector("#userForm");
       const setMastery = (e) => sendPost(e, summonerForm);
       const addUsers = (e) => sendNewUser(e, userForm);
       const refreshUsers = (e) => requestUpdate(e);
-
-
-
 
       userForm.addEventListener('submit', addUsers,);
       userForm.addEventListener('submit', refreshUsers);
@@ -197,7 +187,7 @@
 
 <body>
   <section id="top">
-    <h2>League Of Legends Summoner Finder</h3>
+    <h2>League Of Legends Summoner Finder</h2>
       <form id="summonerForm" action="/setUser" method="post">
         <label for="name">Summoner Name: </label>
         <input id="nameField" type="text" name="name" />
@@ -213,11 +203,11 @@
     <p id="masteryName1"></p>
     <p id="masteryName2"></p>
     <p id="masteryName3"></p>
-    <img id="mastery1" />
-    <img id="mastery2" />
-    <img id="mastery3" />
+    <img id="mastery1" alt = "Number 1 mastery"/>
+    <img id="mastery2" alt = "Number 2 mastery"/>
+    <img id="mastery3" alt = "Number 3 mastery"/>
     <form id="userForm" action="/addUser" method="post">
-      <input id="addUserButton"type="submit" value="Add Current User" />
+      <input id="addUserButton" type="submit" value="Add Current User" />
     </form>
     <ul id="summonerList"></ul>
     

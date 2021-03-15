@@ -25,6 +25,7 @@ const urlStruct = {
   },
 };
 const handlePost = (request, response, parsedUrl) => {
+  //Handles the getMasteryCalls
   if (parsedUrl.pathname === '/setUser') {
     const body = [];
 
@@ -44,6 +45,7 @@ const handlePost = (request, response, parsedUrl) => {
 
       jsonHandler.getMastery(request, response, bodyParams.name);
     });
+    //Handles adding a user
   } else if (parsedUrl.pathname === '/addUser') {
     const body = [];
 
@@ -66,24 +68,25 @@ const handlePost = (request, response, parsedUrl) => {
   }
 };
 const getMasterList = () => {
+  //Pulls the file from riots database
   http.get('http://ddragon.leagueoflegends.com/cdn/11.5.1/data/en_US/champion.json', (resp) => {
     let data = ' ';
 
     resp.on('data', (chunk) => {
       data += chunk;
     });
-
+    //Adds it to the master list to be sent to JSON response
     resp.on('end', () => {
       masterList = JSON.parse(data).data;
       jsonHandler.parseChampionList(masterList);
     });
   });
 };
+//This will handle all URL requests
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   console.dir(parsedUrl.pathname);
-  // console.dir("Method" + request.method);
-
+  
   if (request.method === 'POST') {
     console.dir(`Method${request.method}`);
 
@@ -94,6 +97,7 @@ const onRequest = (request, response) => {
     urlStruct.GET.notFound(request, response);
   }
 };
+//Gets the master list when the server starts
 getMasterList();
 
 http.createServer(onRequest).listen(port);

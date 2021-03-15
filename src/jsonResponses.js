@@ -6,15 +6,16 @@ let championMasteryList = {};
 const imageURLs = {};
 const leagueAPIKey = 'RGAPI-88f4b674-e1d9-470a-983b-d9e2e870b42b';
 const users = {};
-
+//This registers a new API when the server is launched
 LeagueAPI = new LeagueAPI(leagueAPIKey, 'na1');
 
+//This handles all JSON response
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(object));
   response.end();
 };
-
+//Headers
 const respondJSONMeta = (request, response, status) => {
   const headers = {
     'Content-Type': 'application/jason',
@@ -22,7 +23,7 @@ const respondJSONMeta = (request, response, status) => {
   response.writeHead(status, headers);
   response.end();
 };
-
+//404
 const notFound = (request, response) => {
   const responseJSON = {
     message: 'The page you are looking for isnt here!',
@@ -35,7 +36,7 @@ const notFound = (request, response) => {
 const notFoundMeta = (request, response) => {
   respondJSONMeta(request, response, 404);
 };
-
+//This will return the list of users
 const getUsers = (request, response) => {
   const responseJSON = {
     users,
@@ -46,17 +47,17 @@ const getUsers = (request, response) => {
 
 const getUsersMeta = (request, response) => respondJSONMeta(request, response, 200);
 
+//This functions parses the massive file down to only the parts I need
 const parseChampionList = (htmlList) => {
   const champsList = htmlList;
   const keys = Object.keys(champsList);
-  keys.forEach((key) => {
+  keys.forEach((key) => { //for each champion grab its name
     championListParsed[champsList[key].key] = {
       championId: key,
     };
-    // console.log(championListParsed[key.key].id);
   });
 };
-
+//Adds a new summoner
 const addUser = (request, response, body) => {
   const responseJSON = {
     message: 'Name and age are both required',
@@ -90,7 +91,7 @@ const getSummoner = () => {
     })
     .catch(console.error);
 };
-
+//This function sets the top 3 champions names and images for getMastery
 const setTop3Mastery = () => {
   let champKey;
   for (let i = 0; i < 3; i++) {
@@ -104,10 +105,13 @@ const setTop3Mastery = () => {
 };
 // Gets top 3 champions
 const getMastery = async (request, response, summonerName) => {
-  LeagueAPI.getSummonerByName(summonerName)
-
+  //This is the promise chain
+  //Gets the user name
+  LeagueAPI.getSummonerByName(summonerName) 
+    //Gets that users championMastery Summary
     .then((accountObj) => LeagueAPI.getChampionMastery(accountObj))
     .then((championMasteryListPromise) => {
+      //Sets the array = to the response
       championMasteryList = championMasteryListPromise;
       return setTop3Mastery();
     }).then(() => {
@@ -117,11 +121,13 @@ const getMastery = async (request, response, summonerName) => {
         champIDArray,
       };
       return respondJSON(request, response, 200, responseJSON);
+      //returns all the data
     })
     .catch(() => {
       const responseJSONError = { message: 'Summoner Not Found' };
 
       return respondJSON(request, response, 404, responseJSONError);
+      //If the summoner isnt found it will return this message
     });
 
   // return respondJSON(request, response, 200, responseJSON);
