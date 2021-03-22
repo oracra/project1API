@@ -4,7 +4,7 @@ const championListParsed = {};
 const champIDArray = {};
 let championMasteryList = {};
 const imageURLs = {};
-const leagueAPIKey = 'RGAPI-88f4b674-e1d9-470a-983b-d9e2e870b42b';
+const leagueAPIKey = 'RGAPI-02e23f92-b408-47a1-89a6-1d77a8c5f56c';
 const users = {};
 //This registers a new API when the server is launched
 LeagueAPI = new LeagueAPI(leagueAPIKey, 'na1');
